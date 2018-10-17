@@ -33,21 +33,20 @@
 QSerialPort *serial;
 
 MainWindow::MainWindow(QWidget *parent) :
-  QMainWindow(parent),
-  ui(new Ui::MainWindow),
-  mPlot(0),
-  mTag1(0),
-  mTag2(0),
-  mTag3(0),
-  mTag4(0),
-  mTag5(0),
-  mTag6(0),
-  mTag7(0),
-  mTag8(0),
-  mTag9(0),
-  mTag10(0),
-  mTag11(0),
-  mTag12(0)
+    QMainWindow(parent),
+    ui(new Ui::MainWindow),
+    mTag1(0),
+    mTag2(0),
+    mTag3(0),
+    mTag4(0),
+    mTag5(0),
+    mTag6(0),
+    mTag7(0),
+    mTag8(0),
+    mTag9(0),
+    mTag10(0),
+    mTag11(0),
+    mTag12(0)
 {
     ui->setupUi(this);
     serial = new QSerialPort(this);
@@ -64,42 +63,39 @@ MainWindow::MainWindow(QWidget *parent) :
     }
     serial->write("ok*");
     connect(serial,SIGNAL(readyRead()),this,SLOT(serialRecieved()));
-  
-  mPlot = new QCustomPlot(this);
-  setCentralWidget(mPlot);
-  
-  // configure plot to have two right axes:
-  mPlot->yAxis->setTickLabels(false);
-  connect(mPlot->yAxis2, SIGNAL(rangeChanged(QCPRange)), mPlot->yAxis, SLOT(setRange(QCPRange))); // left axis only mirrors inner right axis
-  mPlot->yAxis2->setVisible(true);
-  mPlot->axisRect()->addAxis(QCPAxis::atRight);
-  mPlot->axisRect()->axis(QCPAxis::atRight, 0)->setPadding(30); // add some padding to have space for tags
-  //mPlot->axisRect()->axis(QCPAxis::atRight, 1)->setPadding(30); // add some padding to have space for tags
-  //mPlot->axisRect()->axis(QCPAxis::atRight, 1)->setPadding(30);
-  
-  // create graphs:
-  mGraph1 = mPlot->addGraph(mPlot->xAxis, mPlot->axisRect()->axis(QCPAxis::atRight, 0));
-  mGraph2 = mPlot->addGraph(mPlot->xAxis, mPlot->axisRect()->axis(QCPAxis::atRight, 0));
-  mGraph3 = mPlot->addGraph(mPlot->xAxis, mPlot->axisRect()->axis(QCPAxis::atRight, 0));
-  mGraph1->setPen(QPen(QColor(250, 120, 0)));
-  mGraph2->setPen(QPen(QColor(0, 180, 60)));
-  mGraph3->setPen(QPen(QColor(0, 0, 0)));
-  
-  // create tags with newly introduced AxisTag class (see axistag.h/.cpp):
-  mTag1 = new AxisTag(mGraph1->valueAxis());
-  mTag1->setPen(mGraph1->pen());
-  mTag2 = new AxisTag(mGraph2->valueAxis());
-  mTag2->setPen(mGraph2->pen());
-  mTag3 = new AxisTag(mGraph3->valueAxis());
-  mTag3->setPen(mGraph3->pen());
 
-  connect(&mDataTimer, SIGNAL(timeout()), this, SLOT(timerSlot()));
-  mDataTimer.start(50);
+    // configure plot to have two right axes:
+    ui->mPlot->yAxis->setTickLabels(false);
+    connect(ui->mPlot->yAxis2, SIGNAL(rangeChanged(QCPRange)), ui->mPlot->yAxis, SLOT(setRange(QCPRange))); // left axis only mirrors inner right axis
+    ui->mPlot->yAxis2->setVisible(true);
+    ui->mPlot->axisRect()->addAxis(QCPAxis::atRight);
+    ui->mPlot->axisRect()->axis(QCPAxis::atRight, 0)->setPadding(30); // add some padding to have space for tags
+    //mPlot->axisRect()->axis(QCPAxis::atRight, 1)->setPadding(30); // add some padding to have space for tags
+    //mPlot->axisRect()->axis(QCPAxis::atRight, 1)->setPadding(30);
+
+    // create graphs:
+    mGraph1 = ui->mPlot->addGraph(ui->mPlot->xAxis, ui->mPlot->axisRect()->axis(QCPAxis::atRight, 0));
+    mGraph2 = ui->mPlot->addGraph(ui->mPlot->xAxis, ui->mPlot->axisRect()->axis(QCPAxis::atRight, 0));
+    mGraph3 = ui->mPlot->addGraph(ui->mPlot->xAxis, ui->mPlot->axisRect()->axis(QCPAxis::atRight, 0));
+    mGraph1->setPen(QPen(QColor(250, 120, 0)));
+    mGraph2->setPen(QPen(QColor(0, 180, 60)));
+    mGraph3->setPen(QPen(QColor(0, 0, 0)));
+
+    // create tags with newly introduced AxisTag class (see axistag.h/.cpp):
+    mTag1 = new AxisTag(mGraph1->valueAxis());
+    mTag1->setPen(mGraph1->pen());
+    mTag2 = new AxisTag(mGraph2->valueAxis());
+    mTag2->setPen(mGraph2->pen());
+    mTag3 = new AxisTag(mGraph3->valueAxis());
+    mTag3->setPen(mGraph3->pen());
+
+    connect(&mDataTimer, SIGNAL(timeout()), this, SLOT(timerSlot()));
+    mDataTimer.start(50);
 }
 
 MainWindow::~MainWindow()
 {
-  delete ui;
+    delete ui;
 }
 
 QByteArray charBuffer;
@@ -121,23 +117,27 @@ void MainWindow::parseSerial(QByteArray data)
     {
         QString myString(charBuffer);
         List = myString.split(':');
-//            qDebug() << "List = " << List << endl;
+        qDebug() << "List = " << List << endl;
         charBuffer = "";
+
+        if(List.length() < 14)
+            return;
+
+        temp = List[1];
+        humidity = List[2];
+        pressure = List[3];
+        mag_x = List[4];
+        mag_y = List[5];
+        mag_z = List[6];
+        gyro_x = List[7];
+        gyro_y = List[8];
+        gyro_z = List[9];
+        acc_x = List[10];
+        acc_y = List[11];
+        acc_z = List[12];
     } else {
         return;
     }
-    temp = List[1];
-    humidity = List[2];
-    pressure = List[3];
-    mag_x = List[4];
-    mag_y = List[5];
-    mag_z = List[6];
-    gyro_x = List[7];
-    gyro_y = List[8];
-    gyro_z = List[9];
-    acc_x = List[10];
-    acc_y = List[11];
-    acc_z = List[12];
 
     tempd = temp.toDouble();
     humidityd = humidity.toDouble();
@@ -153,18 +153,18 @@ void MainWindow::parseSerial(QByteArray data)
     acc_zd = acc_z.toDouble();
 
 
-    qDebug() << tempd;
-    qDebug() << humidityd;
-    qDebug() << pressured;
-    qDebug() << mag_xd;
-    qDebug() << mag_yd;
-    qDebug() << mag_zd;
-    qDebug() << gyro_xd;
-    qDebug() << gyro_yd;
-    qDebug() << gyro_zd;
-    qDebug() << acc_xd;
-    qDebug() << acc_yd;
-    qDebug() << acc_zd;
+    //    qDebug() << tempd;
+    //    qDebug() << humidityd;
+    //    qDebug() << pressured;
+    //    qDebug() << mag_xd;
+    //    qDebug() << mag_yd;
+    //    qDebug() << mag_zd;
+    //    qDebug() << gyro_xd;
+    //    qDebug() << gyro_yd;
+    //    qDebug() << gyro_zd;
+    //    qDebug() << acc_xd;
+    //    qDebug() << acc_yd;
+    //    qDebug() << acc_zd;
 
     //temp, humidity, pressure, mag_X, mag_Y, mag_Z, gyro_X, gyro_Y, gyro_Z, acc_X, acc_Y, acc_Z
 
@@ -176,27 +176,26 @@ void MainWindow::timerSlot()
     mGraph2->addData(mGraph2->dataCount(), acc_yd);
     mGraph3->addData(mGraph3->dataCount(), acc_zd);
 
+    //  mGraph1->addData(mGraph1->dataCount(), qSin(mGraph1->dataCount()/50.0)+qSin(mGraph1->dataCount()/50.0/0.3843)*0.25);
+    //  mGraph2->addData(mGraph2->dataCount(), qCos(mGraph2->dataCount()/50.0)+qSin(mGraph2->dataCount()/50.0/0.4364)*0.15);
 
-//  mGraph1->addData(mGraph1->dataCount(), qSin(mGraph1->dataCount()/50.0)+qSin(mGraph1->dataCount()/50.0/0.3843)*0.25);
-//  mGraph2->addData(mGraph2->dataCount(), qCos(mGraph2->dataCount()/50.0)+qSin(mGraph2->dataCount()/50.0/0.4364)*0.15);
+    // make key axis range scroll with the data:
+    ui->mPlot->xAxis->rescale();
+    mGraph1->rescaleValueAxis(false, true);
+    mGraph2->rescaleValueAxis(false, true);
+    mGraph3->rescaleValueAxis(false, true);
+    ui->mPlot->xAxis->setRange(ui->mPlot->xAxis->range().upper, 200, Qt::AlignRight);
 
-  // make key axis range scroll with the data:
-  mPlot->xAxis->rescale();
-  mGraph1->rescaleValueAxis(false, true);
-  mGraph2->rescaleValueAxis(false, true);
-  mGraph3->rescaleValueAxis(false, true);
-  mPlot->xAxis->setRange(mPlot->xAxis->range().upper, 200, Qt::AlignRight);
-  
-  // update the vertical axis tag positions and texts to match the rightmost data point of the graphs:
-  double graph1Value = mGraph1->dataMainValue(mGraph1->dataCount()-1);
-  double graph2Value = mGraph2->dataMainValue(mGraph2->dataCount()-1);
-  double graph3Value = mGraph3->dataMainValue(mGraph3->dataCount()-1);
-  mTag1->updatePosition(graph1Value);
-  mTag2->updatePosition(graph2Value);
-  mTag3->updatePosition(graph3Value);
-  mTag1->setText(QString::number(graph1Value, 'f', 2));
-  mTag2->setText(QString::number(graph2Value, 'f', 2));
-  mTag3->setText(QString::number(graph3Value, 'f', 2));
-  
-  mPlot->replot();
+    // update the vertical axis tag positions and texts to match the rightmost data point of the graphs:
+    double graph1Value = mGraph1->dataMainValue(mGraph1->dataCount()-1);
+    double graph2Value = mGraph2->dataMainValue(mGraph2->dataCount()-1);
+    double graph3Value = mGraph3->dataMainValue(mGraph3->dataCount()-1);
+    mTag1->updatePosition(graph1Value);
+    mTag2->updatePosition(graph2Value);
+    mTag3->updatePosition(graph3Value);
+    mTag1->setText(QString::number(graph1Value, 'f', 2));
+    mTag2->setText(QString::number(graph2Value, 'f', 2));
+    mTag3->setText(QString::number(graph3Value, 'f', 2));
+
+    ui->mPlot->replot();
 }

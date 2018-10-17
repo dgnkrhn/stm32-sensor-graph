@@ -49,8 +49,6 @@ private slots:
   
 private:
   Ui::MainWindow *ui;
-  QCustomPlot *mPlot;
-  QCustomPlot *mPlot2;
   QPointer<QCPGraph> mGraph1;
   QPointer<QCPGraph> mGraph2;
   QPointer<QCPGraph> mGraph3;
