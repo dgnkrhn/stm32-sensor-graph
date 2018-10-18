@@ -1,0 +1,67 @@
+#include "mbed.h"
+
+// Sensors drivers present in the BSP library
+#include "stm32l475e_iot01_tsensor.h"
+#include "stm32l475e_iot01_hsensor.h"
+#include "stm32l475e_iot01_psensor.h"
+#include "stm32l475e_iot01_magneto.h"
+#include "stm32l475e_iot01_gyro.h"
+#include "stm32l475e_iot01_accelero.h"
+
+DigitalOut led(LED1);
+
+void baud(int baudrate) {
+    Serial s(SERIAL_TX, SERIAL_RX);
+    s.baud(baudrate);
+}
+
+int main()
+{
+    float sensor_t = 0;
+    float sensor_h = 0;
+    float sensor_p = 0;
+    int16_t pDataXYZ[3] = {0};
+    float pGyroDataXYZ[3] = {0};
+
+    BSP_TSENSOR_Init();
+    BSP_HSENSOR_Init();
+    BSP_PSENSOR_Init();
+
+    BSP_MAGNETO_Init();
+    BSP_GYRO_Init();
+    BSP_ACCELERO_Init();
+
+    while(1) {
+
+        led = 1;
+        
+        printf("Sensors=");
+        
+        sensor_t = BSP_TSENSOR_ReadTemp();
+        printf(" : %.2f", sensor_t);
+
+        sensor_h = BSP_HSENSOR_ReadHumidity();
+        printf(" : %.2f%", sensor_h);
+
+        sensor_p = BSP_PSENSOR_ReadPressure();
+        printf(" : %.2f", sensor_p);
+        
+        BSP_MAGNETO_GetXYZ(pDataXYZ);
+        printf(" : %d", pDataXYZ[0]);
+        printf(" : %d", pDataXYZ[1]);
+        printf(" : %d", pDataXYZ[2]);
+
+        BSP_GYRO_GetXYZ(pGyroDataXYZ);
+        printf(" : %.1f", pGyroDataXYZ[0]);
+        printf(" : %.1f", pGyroDataXYZ[1]);
+        printf(" : %.1f", pGyroDataXYZ[2]);
+
+        BSP_ACCELERO_AccGetXYZ(pDataXYZ);
+        printf(" : %d", pDataXYZ[0]);
+        printf(" : %d", pDataXYZ[1]);
+        printf(" : %d : \n", pDataXYZ[2]);
+
+        led = 0;
+    }
+}
+ 

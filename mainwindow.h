@@ -46,33 +46,29 @@ public:
 private slots:
     void serialRecieved();
     void timerSlot();
+    void setRange0(QCPRange range);
+    void setRange1(QCPRange range);
   
 private:
   Ui::MainWindow *ui;
+
+  QCPRange range0;
+  QCPRange range1;
+
   QPointer<QCPGraph> mGraph1;
   QPointer<QCPGraph> mGraph2;
   QPointer<QCPGraph> mGraph3;
-  QPointer<QCPGraph> mGraph4;
-  QPointer<QCPGraph> mGraph5;
-  QPointer<QCPGraph> mGraph6;
-  QPointer<QCPGraph> mGraph7;
-  QPointer<QCPGraph> mGraph8;
-  QPointer<QCPGraph> mGraph9;
-  QPointer<QCPGraph> mGraph10;
-  QPointer<QCPGraph> mGraph11;
-  QPointer<QCPGraph> mGraph12;
+  QPointer<QCPGraph> m2Graph1;
+  QPointer<QCPGraph> m2Graph2;
+  QPointer<QCPGraph> m2Graph3;
+
   AxisTag *mTag1;
   AxisTag *mTag2;
   AxisTag *mTag3;
-  AxisTag *mTag4;
-  AxisTag *mTag5;
-  AxisTag *mTag6;
-  AxisTag *mTag7;
-  AxisTag *mTag8;
-  AxisTag *mTag9;
-  AxisTag *mTag10;
-  AxisTag *mTag11;
-  AxisTag *mTag12;
+  AxisTag *m2Tag1;
+  AxisTag *m2Tag2;
+  AxisTag *m2Tag3;
+
   QTimer mDataTimer;
   double tempd;
   double humidityd;
